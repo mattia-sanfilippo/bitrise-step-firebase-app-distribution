@@ -38,14 +38,6 @@ toolkit:
     entry_file: step.sh
 
 inputs:
-  - firebase_token:
-    opts:
-      title: Firebase Token
-      description: |
-        Firebase CI access token. You can create it by `firebase login:ci` on your local machine.
-
-        It is something in the form of `1/a1gqPSI3r-RLgCQO47pJW7WdmqdypiJMO`
-      is_sensitive: true
   - service_credentials_file:
     opts:
       title: Service Credentials File

@@ -9,7 +9,6 @@ app:
   - BITRISE_STEP_VERSION: 0.11.0
   - BITRISE_STEP_GIT_CLONE_URL: https://github.com/guness/bitrise-step-firebase-app-distribution.git
   - MY_STEPLIB_REPO_FORK_GIT_URL: git@github.com:guness/bitrise-steplib.git
-  - FIREBASE_CI_TOKEN: $FIREBASE_CI_TOKEN
   - FIREBASE_APP_ID_ANDROID: $FIREBASE_APP_ID_ANDROID
   - FIREBASE_APP_ID_IOS: $FIREBASE_APP_ID_IOS
   - IOS_PROJECT_PATH: ios-simple-objc/ios-simple-objc.xcodeproj
@@ -87,7 +86,7 @@ workflows:
         inputs:
         - app: $FIREBASE_APP_ID_IOS
         - app_path: $BITRISE_IPA_PATH|$BITRISE_APK_PATH|$BITRISE_AAB_PATH
-        - firebase_token: $FIREBASE_CI_TOKEN
+        - service_credentials_file: $BITRISEIO_service_credentials_file_URL
         - is_debug: "true"
         - release_notes: 'Some Test #1 "Over" here'
   deploy-bitrise:

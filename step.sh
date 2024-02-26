@@ -104,7 +104,6 @@ function truncate_release_notes {
 #
 # Validate parameters
 echo_info "Configs:"
-echo_details "* firebase_token: $firebase_token"
 echo_details "* service_credentials_file: $service_credentials_file"
 echo_details "* app_path: $app_path"
 echo_details "* app: $app"
@@ -154,32 +153,18 @@ if [ ! -f "${app_path}" ] ; then
     echo_fail "App path defined but the file does not exist at path: ${app_path}"
 fi
 
-if [ -n "${FIREBASE_TOKEN}" ] && [ -z "${FIREBASE_TOKEN}" ] ; then
-    echo_warn "FIREBASE_TOKEN is defined but empty. This may cause a problem with the binary."
-fi
-
-if [ -z "${firebase_token}" ] ; then
-    if [ -z "${service_credentials_file}" ]; then
-        echo_fail "No authentication input was defined, please fill one of Firebase Token or Service Credentials Field."
-    elif [ ! -f "${service_credentials_file}" ]; then
-        if [[ $service_credentials_file == http* ]]; then
-          echo_info "Service Credentials File is a remote url, downloading it ..."
-          curl $service_credentials_file --output credentials.json
-          service_credentials_file=$(pwd)/credentials.json
-          export GOOGLE_APPLICATION_CREDENTIALS="${service_credentials_file}"
-          echo_info "Downloaded Service Credentials File to path: ${service_credentials_file}"
-        else
-          echo_fail "Service Credentials File defined but does not exist at path: ${service_credentials_file}"
-        fi
+if [ -z "${service_credentials_file}" ]; then
+    echo_fail "No authentication input was defined, please fill one of Firebase Token or Service Credentials Field."
+elif [ ! -f "${service_credentials_file}" ]; then
+    if [[ $service_credentials_file == http* ]]; then
+      echo_info "Service Credentials File is a remote url, downloading it ..."
+      curl $service_credentials_file --output credentials.json
+      service_credentials_file=$(pwd)/credentials.json
+      export GOOGLE_APPLICATION_CREDENTIALS="${service_credentials_file}"
+      echo_info "Downloaded Service Credentials File to path: ${service_credentials_file}"
+    else
+      echo_fail "Service Credentials File defined but does not exist at path: ${service_credentials_file}"
     fi
-fi
-
-if [ -n "${FIREBASE_TOKEN}" ]  && [ -n "${service_credentials_file}" ]; then
-    echo_warn "Both authentication methods are defined: Firebase Token (via FIREBASE_TOKEN environment variable) and Service Credentials Field, one is enough."
-fi
-
-if [ -n "${firebase_token}" ]  && [ -n "${service_credentials_file}" ]; then
-    echo_warn "Both authentication inputs are defined: Firebase Token and Service Credentials Field, one is enough."
 fi
 
 if [ -z "${app}" ] ; then
@@ -209,10 +194,6 @@ submit_cmd="firebase appdistribution:distribute \"${app_path}\""
 submit_cmd="$submit_cmd --app \"${app}\""
 
 ## Optional params
-if [ -n "${firebase_token}" ] ; then
-    submit_cmd="$submit_cmd --token \"${firebase_token}\""
-fi
-
 if [ -n "${release_notes}" ] ; then
     submit_cmd="$submit_cmd --release-notes \"$(escape "$release_notes")\""
 fi
